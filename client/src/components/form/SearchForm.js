@@ -1,0 +1,197 @@
+import React, {useState} from 'react';
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button'
+import classes from './SearchForm.module.css';
+import {FaSearch} from 'react-icons/fa';
+
+const SearchForm = () => {
+    const options = [
+        'Default',
+        'Airport',
+        'Amusement Park',
+        'Aquarium',
+        'Art Gallery',
+        'Bakery',
+        'Bar',
+        'Beauty Salon',
+        'Bowing Alley',
+        'Bus Station',
+        'Cafe',
+        'Campground',
+        'Car Rental',
+        'Casino',
+        'Lodging',
+        'Movie Theater',
+        'Museum',
+        'Night Club',
+        'Park',
+        'Parking',
+        'Restaurant',
+        'Shopping Mall',
+        'Stadium',
+        'Subway Station',
+        'Taxi Stand',
+        'Train Station',
+        'Transit Station',
+        'Travel Agency',
+        'Zoo'
+    ];
+    const [formData, setFormData] = useState({
+        keyword: '',
+        category: 'Default',
+        distance: '10',
+        from: 'current',
+        location: ''
+    });
+    const {
+        keyword,
+        category,
+        distance,
+        from,
+        location
+    } = formData;
+    const [touched, setTouched] = useState({
+        keyword: false,
+        location: false
+    });
+    const onBlur = (field) => {
+        setTouched({
+            ...touched,
+            [field]: true
+        });
+    };
+    const onChange = (event) => {
+        setFormData({
+                ...formData,
+                [event.target.name]: event.target.value
+            }
+        );
+    };
+    const onSubmit = (event) => {
+        event.preventDefault();
+        console.log(formData);
+    };
+
+    return (
+        <Container className={`mt-3 border rounded ${classes.formContainer}`}>
+            <Form className={`${classes.form}`}
+                  onSubmit={(event) => onSubmit(event)}>
+                <Form.Row>
+                    <Col lg={3}/>
+                    <Col xs={12} lg={9}>
+                        <h3 className={classes.formTitle}>
+                            Travel and Entertainment Search
+                        </h3>
+                    </Col>
+                </Form.Row>
+                <Form.Group>
+                    <Form.Row>
+                        <Col xs={12} lg={3}>
+                            <Form.Label className={classes.required}>
+                                Keyword
+                            </Form.Label>
+                        </Col>
+                        <Col xs={12} lg={9}>
+                            <Form.Control value={keyword}
+                                          name="keyword"
+                                          required
+                                          isInvalid={touched.keyword && !keyword.replace(/\s/g, '').length}
+                                          onBlur={() => onBlur('keyword')}
+                                          onChange={(event) => onChange(event)}/>
+                            <div className="invalid-feedback">
+                                Please enter a keyword.
+                            </div>
+                        </Col>
+                    </Form.Row>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Row>
+                        <Col xs={12} lg={3}>
+                            <Form.Label>
+                                Category
+                            </Form.Label>
+                        </Col>
+                        <Col xs={12} lg={6}>
+                            <Form.Control as="select"
+                                          value={category}
+                                          name="category"
+                                          onChange={(event => onChange(event))}>
+                                {options.map((option) => {
+                                    return <option value={option}
+                                                   key={option}>{option}
+                                    </option>
+                                })}
+                            </Form.Control>
+                        </Col>
+                    </Form.Row>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Row>
+                        <Col xs={12} lg={3}>
+                            <Form.Label>
+                                Distance (miles)
+                            </Form.Label>
+                        </Col>
+                        <Col xs={12} lg={6}>
+                            <Form.Control placeholder="10" value={distance}
+                                          name="distance"
+                                          onChange={(event) => onChange(event)}/>
+                        </Col>
+                    </Form.Row>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Row>
+                        <Col xs={12} lg={3}>
+                            <Form.Label className={classes.required}>
+                                From
+                            </Form.Label>
+                        </Col>
+                        <Col xs={12} lg={9}>
+                            <Form.Check
+                                defaultChecked
+                                type="radio"
+                                id="current"
+                                value="current"
+                                label="Current location"
+                                name="from"
+                                onChange={(event) => onChange(event)}
+                            />
+                            <Form.Check
+                                type="radio"
+                                id="other"
+                                value="other"
+                                label="Other. Please specify:"
+                                name="from"
+                                onChange={(event) => onChange(event)}
+                            />
+                            <Form.Control disabled={from === 'current'}
+                                          placeholder="Enter a location"
+                                          name="location"
+                                          value={location}
+                                          required
+                                          isInvalid={touched.location && !location.replace(/\s/g, '').length && from === 'other'}
+                                          onChange={(event) => onChange(event)}
+                                          onBlur={() => onBlur('location')}/>
+                            <div className="invalid-feedback">
+                                Please enter a location.
+                            </div>
+                        </Col>
+                    </Form.Row>
+                </Form.Group>
+                <Form.Row>
+                    <Button variant="primary" type="submit" className="mx-1"
+                            disabled={!keyword.replace(/\s/g, '').length || (from === 'other' && !location.replace(/\s/g, '').length)}>
+                        <FaSearch/> Search
+                    </Button>
+                    <Button variant="outline-secondary">
+                        Clear
+                    </Button>
+                </Form.Row>
+            </Form>
+        </Container>
+    );
+};
+
+export default SearchForm;

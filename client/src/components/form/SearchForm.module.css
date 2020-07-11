@@ -1,0 +1,28 @@
+.formContainer {
+    background: #F8F8F8;
+}
+
+.form {
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+.formTitle {
+
+}
+
+@media screen and (max-width: 576px) {
+    .form {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .formTitle {
+        text-align: center;
+    }
+}
+
+.required:after {
+    content: "*";
+    color: red;
+}

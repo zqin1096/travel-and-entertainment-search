@@ -1,9 +1,10 @@
 import React from 'react';
 import './App.css';
+import SearchForm from './components/form/SearchForm';
 
 function App() {
     return (
-        <div>Travel and Entertainment Search</div>
+        <SearchForm/>
     );
 }
 
