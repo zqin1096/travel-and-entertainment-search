@@ -5,8 +5,11 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button'
 import classes from './SearchForm.module.css';
 import {FaSearch} from 'react-icons/fa';
+import {getPlaces} from '../../actions/placeAction';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 
-const SearchForm = () => {
+const SearchForm = (props) => {
     const options = [
         'Default',
         'Airport',
@@ -71,7 +74,7 @@ const SearchForm = () => {
     };
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(formData);
+        props.getPlaces(formData);
     };
 
     return (
@@ -194,4 +197,4 @@ const SearchForm = () => {
     );
 };
 
-export default SearchForm;
+export default connect(null, {getPlaces})(SearchForm);

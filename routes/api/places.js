@@ -3,25 +3,27 @@ const router = express.Router();
 const config = require('config');
 const https = require('https');
 const http = require('http');
+const axios = require('axios');
 
 // GET api/places/search
 // A Nearby Search lets you search for places within a specified area.
 router.get('/search', async (req, res) => {
     try {
         console.log(req.query.latitude, req.query.longitude, req.query.radius);
-        // Initital a GET request.
-        https.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${req.query.keyword}&type=${req.query.type}&location=${req.query.latitude},${req.query.longitude}&radius=${req.query.radius}&key=${config.get('googleAPIsKey')}`, (response) => {
-            let body = "";
-            response.on('data', (chunk) => {
-                body += chunk;
-            });
-            response.on('end', function () {
-                return res.end(body);
-            });
-
-        }).on('error', (e) => {
-            console.error(e);
-        });
+        // // Initital a GET request.
+        // https.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.latitude},${req.query.longitude}&radius=${req.query.radius}&type=${req.query.type}&keyword=${req.query.keyword}&key=${config.get('googleAPIsKey')}`, (response) => {
+        //     let body = "";
+        //     response.on('data', (chunk) => {
+        //         body += chunk;
+        //     });
+        //     response.on('end', function () {
+        //         return res.send(JSON.parse(body));
+        //     });
+        // }).on('error', (e) => {
+        //     console.error(e);
+        // });
+        const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.latitude},${req.query.longitude}&radius=${req.query.radius}&type=${req.query.type}&keyword=${req.query.keyword}&key=${config.get('googleAPIsKey')}`);
+        return res.send(response.data);
     } catch (e) {
         console.log(e.message);
         res.status(500).send('Server error');
@@ -38,9 +40,13 @@ router.get('/current_location', async (req, res) => {
                 body += chunk;
             });
             response.on('end', function () {
-                return res.end(body);
+                const json = JSON.parse(body);
+                const coordinate = {
+                    latitude: json.lat,
+                    longitude: json.lon
+                };
+                return res.send(coordinate);
             });
-
         }).on('error', (e) => {
             console.error(e);
         });
@@ -55,7 +61,27 @@ router.get('/current_location', async (req, res) => {
 // (like latitude and longitude), which you can use to place markers on a map,
 // or position the map.
 router.get('/geocode', async (req, res) => {
-
+    try {
+        https.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(req.query.location)}&key=${config.get('googleAPIsKey')}`, (response) => {
+            let body = "";
+            response.on('data', (chunk) => {
+                body += chunk;
+            });
+            response.on('end', function () {
+                const json = JSON.parse(body);
+                const coordinate = {
+                    latitude: json.results[0].geometry.location.lat,
+                    longitude: json.results[0].geometry.location.lng
+                };
+                return res.send(coordinate);
+            });
+        }).on('error', (e) => {
+            console.error(e);
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.status(500).send('Server error');
+    }
 });
 
 module.exports = router;
