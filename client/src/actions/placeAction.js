@@ -1,5 +1,6 @@
 import {
     GET_PLACES,
+    SET_ERROR,
     SET_LOADING
 } from './types';
 import axios from 'axios';
@@ -38,10 +39,18 @@ export const getPlaces = (formData) => {
                 }
             };
             const response = await axios.get('/api/places/search', searchConfig);
-            dispatch({
-                type: GET_PLACES,
-                payload: response.data
-            });
+            const status = response.data.status;
+            if (status === 'OK') {
+                dispatch({
+                    type: GET_PLACES,
+                    payload: response.data.results
+                });
+            } else {
+                dispatch({
+                    type: SET_ERROR,
+                    payload: status
+                });
+            }
         } catch (e) {
 
         }

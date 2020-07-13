@@ -13,6 +13,6 @@ const store = createStore(
 );
 store.subscribe(() => {
     // Save the state to local storage every time the state changes.
-    saveState(store.getState());
+    saveState(store.getState().favorites);
 });
 export default store;

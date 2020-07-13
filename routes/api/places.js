@@ -9,7 +9,6 @@ const axios = require('axios');
 // A Nearby Search lets you search for places within a specified area.
 router.get('/search', async (req, res) => {
     try {
-        console.log(req.query.latitude, req.query.longitude, req.query.radius);
         // // Initital a GET request.
         // https.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.latitude},${req.query.longitude}&radius=${req.query.radius}&type=${req.query.type}&keyword=${req.query.keyword}&key=${config.get('googleAPIsKey')}`, (response) => {
         //     let body = "";

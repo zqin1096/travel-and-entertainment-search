@@ -1,4 +1,4 @@
-import {GET_PLACES, SET_LOADING} from '../actions/types';
+import {GET_PLACES, SET_ERROR, SET_LOADING} from '../actions/types';
 
 const initialState = {
     places: [],
@@ -18,8 +18,16 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 places: action.payload,
+                error: null,
                 loading: false
             };
+        case SET_ERROR:
+            return {
+                ...state,
+                places: [],
+                error: action.payload,
+                loading: false
+            }
         default:
             return state;
     }

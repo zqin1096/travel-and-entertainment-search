@@ -183,18 +183,24 @@ const SearchForm = (props) => {
                         </Col>
                     </Form.Row>
                 </Form.Group>
-                <Form.Row>
-                    <Button variant="primary" type="submit" className="mx-1"
-                            disabled={!keyword.replace(/\s/g, '').length || (from === 'other' && !location.replace(/\s/g, '').length)}>
-                        <FaSearch/> Search
-                    </Button>
-                    <Button variant="outline-secondary">
-                        Clear
-                    </Button>
-                </Form.Row>
+                <Form.Group>
+                    <Form.Row>
+                        <Button variant="primary" type="submit" className="mx-1"
+                                disabled={!keyword.replace(/\s/g, '').length || (from === 'other' && !location.replace(/\s/g, '').length)}>
+                            <FaSearch/> Search
+                        </Button>
+                        <Button variant="outline-secondary">
+                            Clear
+                        </Button>
+                    </Form.Row>
+                </Form.Group>
             </Form>
         </Container>
     );
 };
+
+SearchForm.propTypes = {
+    getPlaces: PropTypes.func.isRequired
+}
 
 export default connect(null, {getPlaces})(SearchForm);
