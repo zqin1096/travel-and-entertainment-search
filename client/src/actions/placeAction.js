@@ -1,7 +1,9 @@
 import {
     GET_PLACES,
     SET_ERROR,
-    SET_LOADING
+    SET_LOADING,
+    CLEAR_FORM,
+    CHANGE_TAB
 } from './types';
 import axios from 'axios';
 import {milesToMeters} from '../utility';
@@ -9,6 +11,19 @@ import {milesToMeters} from '../utility';
 export const setLoading = () => {
     return {
         type: SET_LOADING
+    };
+};
+
+export const clearForm = () => {
+    return {
+        type: CLEAR_FORM,
+    };
+};
+
+export const changeTab = (tab) => {
+    return {
+        type: CHANGE_TAB,
+        payload: tab
     };
 };
 

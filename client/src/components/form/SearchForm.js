@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button'
 import classes from './SearchForm.module.css';
 import {FaSearch} from 'react-icons/fa';
-import {getPlaces} from '../../actions/placeAction';
+import {getPlaces, clearForm} from '../../actions/placeAction';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -75,6 +75,23 @@ const SearchForm = (props) => {
     const onSubmit = (event) => {
         event.preventDefault();
         props.getPlaces(formData);
+    };
+
+    const onClear = () => {
+        setFormData({
+            ...formData,
+            keyword: '',
+            category: 'Default',
+            distance: '10',
+            from: 'current',
+            location: ''
+        });
+        setTouched({
+            ...touched,
+            keyword: false,
+            location: false
+        });
+        props.clearForm();
     };
 
     return (
@@ -153,12 +170,12 @@ const SearchForm = (props) => {
                         </Col>
                         <Col xs={12} lg={9}>
                             <Form.Check
-                                defaultChecked
                                 type="radio"
                                 id="current"
                                 value="current"
                                 label="Current location"
                                 name="from"
+                                checked={from === 'current'}
                                 onChange={(event) => onChange(event)}
                             />
                             <Form.Check
@@ -167,6 +184,7 @@ const SearchForm = (props) => {
                                 value="other"
                                 label="Other. Please specify:"
                                 name="from"
+                                checked={from === 'other'}
                                 onChange={(event) => onChange(event)}
                             />
                             <Form.Control disabled={from === 'current'}
@@ -189,7 +207,7 @@ const SearchForm = (props) => {
                                 disabled={!keyword.replace(/\s/g, '').length || (from === 'other' && !location.replace(/\s/g, '').length)}>
                             <FaSearch/> Search
                         </Button>
-                        <Button variant="outline-secondary">
+                        <Button variant="outline-secondary" onClick={onClear}>
                             Clear
                         </Button>
                     </Form.Row>
@@ -203,4 +221,4 @@ SearchForm.propTypes = {
     getPlaces: PropTypes.func.isRequired
 }
 
-export default connect(null, {getPlaces})(SearchForm);
+export default connect(null, {getPlaces, clearForm})(SearchForm);

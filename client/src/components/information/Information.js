@@ -9,11 +9,16 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import classes from './Information.module.css'
 import Favorites from '../favorite/Favorites';
 import Alert from 'react-bootstrap/Alert';
+import {changeTab} from '../../actions/placeAction';
 
 const Information = (props) => {
     return (
         <Container className={`mt-3 ${classes.result}`} fluid>
-            <Tab.Container defaultActiveKey="first">
+            <Tab.Container
+                activeKey={props.place.activeTab}
+                onSelect={(key) => {
+                    props.changeTab(key);
+                }}>
                 <Row className="d-flex justify-content-center mb-5">
                     <Nav variant="pills">
                         <Nav.Item>
@@ -60,4 +65,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(Information);
+export default connect(mapStateToProps, {changeTab})(Information);
