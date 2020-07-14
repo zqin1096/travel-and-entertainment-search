@@ -5,7 +5,10 @@ export const loadState = () => {
             return undefined;
         }
         // Convert text into a JS object.
-        return JSON.parse(serializedState);
+        const favorites = JSON.parse(serializedState);
+        return {
+            favorites: favorites
+        };
     } catch (e) {
         // User privacy mode may not allow the use of localStorage.
         return undefined;

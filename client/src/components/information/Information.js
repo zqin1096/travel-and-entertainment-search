@@ -7,6 +7,8 @@ import Results from '../result/Results';
 import {connect} from 'react-redux';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import classes from './Information.module.css'
+import Favorites from '../favorite/Favorites';
+import Alert from 'react-bootstrap/Alert';
 
 const Information = (props) => {
     return (
@@ -23,17 +25,29 @@ const Information = (props) => {
                     </Nav>
                 </Row>
                 {props.place.loading ?
-                    <ProgressBar animated now={45}/> : null}
-                <Tab.Content>
-                    <Tab.Pane eventKey="first">
-                        {(!props.place.loading && props.place.error === null && props.place.places.length > 0) ?
-                            <Results
-                                places={props.place.places}/> : null}
-                    </Tab.Pane>
-                    <Tab.Pane eventKey="second">
-                        Favorites
-                    </Tab.Pane>
-                </Tab.Content>
+                    <ProgressBar animated now={45}/> :
+                    <Tab.Content>
+                        <Tab.Pane eventKey="first">
+                            {(!props.place.loading && props.place.places.length > 0) ?
+                                <Results
+                                    places={props.place.places}/> : props.place.error === 'ZERO_RESULTS' ?
+                                    <Alert variant="warning">
+                                        No record.
+                                    </Alert> : props.place.error !== null ?
+                                        <Alert variant="danger">
+                                            Failed to get search results.
+                                        </Alert> : null}
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="second">
+                            {props.favorites.favorites.length > 0 ?
+                                <Favorites
+                                    favorites={props.favorites.favorites}/> :
+                                <Alert variant="warning">
+                                    No record.
+                                </Alert>}
+                        </Tab.Pane>
+                    </Tab.Content>
+                }
             </Tab.Container>
         </Container>
     );
@@ -41,7 +55,8 @@ const Information = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        place: state.place
+        place: state.place,
+        favorites: state.favorites
     };
 };
 
