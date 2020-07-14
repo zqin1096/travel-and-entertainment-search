@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+/*global google*/
+import React, {useState, useRef, useEffect} from 'react';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
@@ -93,6 +94,26 @@ const SearchForm = (props) => {
         });
         props.clearForm();
     };
+
+    const onPlaceSelected = (formData) => {
+        const place = autocomplete.getPlace();
+        const address = place.formatted_address;
+        setFormData({
+            ...formData,
+            location: address
+        });
+    }
+
+    let autocomplete;
+    let autocompleteRef = useRef(null);
+    // Need to enable Google Maps JavaScript API.
+    useEffect(() => {
+        autocomplete = new google.maps.places.Autocomplete(autocompleteRef.current,
+            {"types": ["geocode"], componentRestrictions: {country: "us"}});
+        autocomplete.addListener("place_changed", () => {
+            onPlaceSelected(formData);
+        });
+    }, [formData]);
 
     return (
         <Container className={`mt-3 border rounded ${classes.formContainer}`}>
@@ -191,6 +212,7 @@ const SearchForm = (props) => {
                                           placeholder="Enter a location"
                                           name="location"
                                           value={location}
+                                          ref={autocompleteRef}
                                           required
                                           isInvalid={touched.location && !location.replace(/\s/g, '').length && from === 'other'}
                                           onChange={(event) => onChange(event)}
