@@ -1,7 +1,7 @@
 import {
     CHANGE_TAB,
     CLEAR_FORM,
-    GET_PLACES,
+    GET_PLACES, NEXT_PAGE, PREV_PAGE,
     SET_ERROR,
     SET_LOADING
 } from '../actions/types';
@@ -11,7 +11,9 @@ const initialState = {
     place: null,
     loading: false,
     error: null,
-    activeTab: 'first'
+    activeTab: 'first',
+    currentPage: 0,
+    totalPages: 0
 };
 
 export default (state = initialState, action) => {
@@ -26,19 +28,33 @@ export default (state = initialState, action) => {
                 ...state,
                 places: action.payload,
                 error: null,
-                loading: false
+                loading: false,
+                currentPage: 1,
+                totalPages: action.payload.length
             };
         case CLEAR_FORM:
             return {
                 ...state,
                 places: [],
                 error: null,
-                activeTab: 'first'
+                activeTab: 'first',
+                currentPage: 0,
+                totalPages: 0
             };
         case CHANGE_TAB:
             return {
                 ...state,
                 activeTab: action.payload
+            };
+        case NEXT_PAGE:
+            return {
+                ...state,
+                currentPage: state.currentPage + 1
+            };
+        case PREV_PAGE:
+            return {
+                ...state,
+                currentPage: state.currentPage - 1
             };
         case SET_ERROR:
             return {
@@ -46,7 +62,7 @@ export default (state = initialState, action) => {
                 places: [],
                 error: action.payload,
                 loading: false
-            }
+            };
         default:
             return state;
     }

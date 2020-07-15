@@ -9,18 +9,6 @@ const axios = require('axios');
 // A Nearby Search lets you search for places within a specified area.
 router.get('/search', async (req, res) => {
     try {
-        // // Initital a GET request.
-        // https.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.latitude},${req.query.longitude}&radius=${req.query.radius}&type=${req.query.type}&keyword=${req.query.keyword}&key=${config.get('googleAPIsKey')}`, (response) => {
-        //     let body = "";
-        //     response.on('data', (chunk) => {
-        //         body += chunk;
-        //     });
-        //     response.on('end', function () {
-        //         return res.send(JSON.parse(body));
-        //     });
-        // }).on('error', (e) => {
-        //     console.error(e);
-        // });
         const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.latitude},${req.query.longitude}&radius=${req.query.radius}&type=${req.query.type}&keyword=${req.query.keyword}&key=${config.get('googleAPIsKey')}`);
         return res.send(response.data);
     } catch (e) {
@@ -77,6 +65,18 @@ router.get('/geocode', async (req, res) => {
         }).on('error', (e) => {
             console.error(e);
         });
+    } catch (e) {
+        console.log(e.message);
+        res.status(500).send('Server error');
+    }
+});
+
+// GET api/places/additional_results
+// Get the results of next page.
+router.get('/additional_results/:token', async (req, res) => {
+    try {
+        const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=${req.params.token}&key=${config.get('googleAPIsKey')}`);
+        return res.send(response.data);
     } catch (e) {
         console.log(e.message);
         res.status(500).send('Server error');

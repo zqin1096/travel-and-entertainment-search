@@ -9,7 +9,8 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import classes from './Information.module.css'
 import Favorites from '../favorite/Favorites';
 import Alert from 'react-bootstrap/Alert';
-import {changeTab} from '../../actions/placeAction';
+import {changeTab, nextPage, prevPage} from '../../actions/placeAction';
+import Button from 'react-bootstrap/Button';
 
 const Information = (props) => {
     return (
@@ -35,13 +36,37 @@ const Information = (props) => {
                         <Tab.Pane eventKey="first">
                             {(!props.place.loading && props.place.places.length > 0) ?
                                 <Results
-                                    places={props.place.places}/> : props.place.error === 'ZERO_RESULTS' ?
+                                    places={props.place.places[props.place.currentPage - 1]}/> : props.place.error === 'ZERO_RESULTS' ?
                                     <Alert variant="warning">
                                         No record.
                                     </Alert> : props.place.error !== null ?
                                         <Alert variant="danger">
                                             Failed to get search results.
-                                        </Alert> : null}
+                                        </Alert> :
+                                        null
+                            }
+                            <div className="text-center pb-5">
+                                <div>
+                                    {
+                                        props.place.currentPage > 1 &&
+                                        <Button
+                                            variant="light"
+                                            className="border mx-3"
+                                            onClick={props.prevPage}>
+                                            Previous
+                                        </Button>
+                                    }
+                                    {
+                                        props.place.currentPage < props.place.totalPages &&
+                                        <Button
+                                            variant="light"
+                                            className="border"
+                                            onClick={props.nextPage}>
+                                            Next
+                                        </Button>
+                                    }
+                                </div>
+                            </div>
                         </Tab.Pane>
                         <Tab.Pane eventKey="second">
                             {props.favorites.favorites.length > 0 ?
@@ -65,4 +90,8 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {changeTab})(Information);
+export default connect(mapStateToProps, {
+    changeTab,
+    nextPage,
+    prevPage
+})(Information);

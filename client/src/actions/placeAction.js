@@ -3,7 +3,7 @@ import {
     SET_ERROR,
     SET_LOADING,
     CLEAR_FORM,
-    CHANGE_TAB
+    CHANGE_TAB, NEXT_PAGE, PREV_PAGE
 } from './types';
 import axios from 'axios';
 import {milesToMeters} from '../utility';
@@ -27,10 +27,23 @@ export const changeTab = (tab) => {
     };
 };
 
+export const nextPage = () => {
+    return {
+        type: NEXT_PAGE
+    };
+};
+
+export const prevPage = () => {
+    return {
+        type: PREV_PAGE
+    };
+};
+
 export const getPlaces = (formData) => {
     return async (dispatch) => {
         try {
             dispatch(setLoading());
+            dispatch(clearForm());
             let res;
             if (formData.from === 'current') {
                 res = await axios.get('/api/places/current_location');
@@ -54,18 +67,38 @@ export const getPlaces = (formData) => {
                 }
             };
             const response = await axios.get('/api/places/search', searchConfig);
+            const payload = [];
             const status = response.data.status;
             if (status === 'OK') {
-                dispatch({
-                    type: GET_PLACES,
-                    payload: response.data.results
-                });
+                // dispatch({
+                //     type: GET_PLACES,
+                //     payload: response.data.results
+                // });
+                payload.push(response.data.results);
             } else {
                 dispatch({
                     type: SET_ERROR,
                     payload: status
                 });
             }
+            let token = response.data.next_page_token;
+            while (token) {
+                let next_page = await axios.get(`/api/places/additional_results/${token}`);
+                // There is a short delay between when a next_page_token is
+                // issued, and when it will become valid. Requesting the next
+                // page before it is available will return an INVALID_REQUEST
+                // response. Retrying the request with the same next_page_token
+                // will return the next page of results.
+                while (next_page.data.status === 'INVALID_REQUEST') {
+                    next_page = await axios.get(`/api/places/additional_results/${token}`);
+                }
+                payload.push(next_page.data.results);
+                token = next_page.data.next_page_token;
+            }
+            dispatch({
+                type: GET_PLACES,
+                payload: payload
+            });
         } catch (e) {
 
         }
