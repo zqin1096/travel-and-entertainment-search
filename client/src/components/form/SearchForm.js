@@ -95,12 +95,13 @@ const SearchForm = (props) => {
         props.clearForm();
     };
 
-    const onPlaceSelected = (formData) => {
+    const onPlaceSelected = () => {
+        console.log(keyword, category, distance, from);
         const place = autocomplete.getPlace();
         const address = place.formatted_address;
         setFormData({
             ...formData,
-            location: address
+            location: address ? address : place.name
         });
     }
 
@@ -111,13 +112,23 @@ const SearchForm = (props) => {
         autocomplete = new google.maps.places.Autocomplete(autocompleteRef.current,
             {"types": ["geocode"], componentRestrictions: {country: "us"}});
         autocomplete.addListener("place_changed", () => {
-            onPlaceSelected(formData);
+            if (!autocomplete.getPlace().formatted_address) {
+                return;
+            }
+            onPlaceSelected();
         });
     }, [formData]);
 
     return (
         <Container className={`mt-3 border rounded ${classes.formContainer}`}>
             <Form className={`${classes.form}`}
+                  onKeyPress={(event) => {
+                      if (event.which === 13 /* Enter */) {
+                          // Prevent submitting the form from pressing the
+                          // enter key.
+                          event.preventDefault();
+                      }
+                  }}
                   onSubmit={(event) => onSubmit(event)}>
                 <Form.Row>
                     <Col lg={3}/>

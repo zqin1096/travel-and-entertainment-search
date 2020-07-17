@@ -7,3 +7,4 @@ export const NEXT_PAGE = 'NEXT_PAGE';
 export const PREV_PAGE = 'PREV_PAGE';
 export const ADD_FAVORITE = 'ADD_FAVORITE';
 export const REMOVE_FAVORITE = 'REMOVE_FAVORITE';
+export const GET_PLACE = 'GET_PLACE';

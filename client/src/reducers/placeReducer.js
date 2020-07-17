@@ -1,6 +1,6 @@
 import {
     CHANGE_TAB,
-    CLEAR_FORM,
+    CLEAR_FORM, GET_PLACE,
     GET_PLACES, NEXT_PAGE, PREV_PAGE,
     SET_ERROR,
     SET_LOADING
@@ -31,6 +31,11 @@ export default (state = initialState, action) => {
                 loading: false,
                 currentPage: 1,
                 totalPages: action.payload.length
+            };
+        case GET_PLACE:
+            return {
+                ...state,
+                place: action.payload
             };
         case CLEAR_FORM:
             return {

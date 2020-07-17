@@ -3,7 +3,7 @@ import {
     SET_ERROR,
     SET_LOADING,
     CLEAR_FORM,
-    CHANGE_TAB, NEXT_PAGE, PREV_PAGE
+    CHANGE_TAB, NEXT_PAGE, PREV_PAGE, GET_PLACE
 } from './types';
 import axios from 'axios';
 import {milesToMeters} from '../utility';
@@ -30,6 +30,13 @@ export const changeTab = (tab) => {
 export const nextPage = () => {
     return {
         type: NEXT_PAGE
+    };
+};
+
+export const getPlace = (placeId) => {
+    return {
+        type: GET_PLACE,
+        payload: placeId
     };
 };
 

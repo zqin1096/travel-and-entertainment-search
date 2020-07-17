@@ -11,6 +11,7 @@ import Favorites from '../favorite/Favorites';
 import Alert from 'react-bootstrap/Alert';
 import {changeTab, nextPage, prevPage} from '../../actions/placeAction';
 import Button from 'react-bootstrap/Button';
+import PlaceDetail from '../detail/PlaceDetail';
 
 const Information = (props) => {
     return (
@@ -79,6 +80,7 @@ const Information = (props) => {
                     </Tab.Content>
                 }
             </Tab.Container>
+            <PlaceDetail/>
         </Container>
     );
 };

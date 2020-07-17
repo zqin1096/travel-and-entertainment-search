@@ -6,6 +6,7 @@ import {IoIosArrowForward} from 'react-icons/io';
 import {connect} from 'react-redux';
 import {addFavorite, removeFavorite} from '../../actions/favoriteAction';
 import {IconContext} from "react-icons";
+import {getPlace} from '../../actions/placeAction';
 
 const ResultItem = (props) => {
     const isFavorite = props.favorites.favorites.find((favorite) => {
@@ -43,7 +44,8 @@ const ResultItem = (props) => {
             </td>
             <td className="align-middle">
                 <Button variant="light" className="border">
-                    <IoIosArrowForward/>
+                    <IoIosArrowForward
+                        onClick={() => props.getPlace(props.place.place_id)}/>
                 </Button>
             </td>
         </tr>
@@ -58,5 +60,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
     addFavorite,
-    removeFavorite
+    removeFavorite,
+    getPlace
 })(ResultItem);
