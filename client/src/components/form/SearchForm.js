@@ -96,12 +96,11 @@ const SearchForm = (props) => {
     };
 
     const onPlaceSelected = () => {
-        console.log(keyword, category, distance, from);
         const place = autocomplete.getPlace();
         const address = place.formatted_address;
         setFormData({
             ...formData,
-            location: address ? address : place.name
+            location: address
         });
     }
 
@@ -112,6 +111,7 @@ const SearchForm = (props) => {
         autocomplete = new google.maps.places.Autocomplete(autocompleteRef.current,
             {"types": ["geocode"], componentRestrictions: {country: "us"}});
         autocomplete.addListener("place_changed", () => {
+            // Prevent calling onPlaceSelected() if the user press "enter".
             if (!autocomplete.getPlace().formatted_address) {
                 return;
             }

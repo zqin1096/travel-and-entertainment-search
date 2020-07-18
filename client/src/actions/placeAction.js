@@ -20,6 +20,7 @@ export const clearForm = () => {
     };
 };
 
+// Change the to Results or Favorites tab.
 export const changeTab = (tab) => {
     return {
         type: CHANGE_TAB,

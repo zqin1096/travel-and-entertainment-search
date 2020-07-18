@@ -3,6 +3,7 @@ import {
     REMOVE_FAVORITE
 } from './types';
 
+// Add a favorite place.
 export const addFavorite = (place) => {
     return {
         type: ADD_FAVORITE,
@@ -10,6 +11,7 @@ export const addFavorite = (place) => {
     };
 };
 
+// Remove a favorite place.
 export const removeFavorite = (place) => {
     return {
         type: REMOVE_FAVORITE,

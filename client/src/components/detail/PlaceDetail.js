@@ -5,6 +5,8 @@ import Tab from 'react-bootstrap/Tab';
 import Container from 'react-bootstrap/Container';
 import Info from './Info';
 import {connect} from 'react-redux';
+import Photos from './Photos';
+import Alert from 'react-bootstrap/Alert';
 
 const PlaceDetail = (props) => {
     const [place, setPlace] = useState(null);
@@ -26,6 +28,7 @@ const PlaceDetail = (props) => {
     if (place === null) {
         return null;
     }
+    console.log(place);
     return (
         <Container fluid>
             <Tabs defaultActiveKey="info" transition={false}
@@ -34,10 +37,15 @@ const PlaceDetail = (props) => {
                     <Info place={place}/>
                 </Tab>
                 <Tab eventKey="photos" title="Photos">
-
+                    {
+                        (place.photos && place.photos.length > 0) ?
+                            <Photos photos={place.photos}/> :
+                            <Alert variant="warning">
+                                No record.
+                            </Alert>
+                    }
                 </Tab>
                 <Tab eventKey="map" title="Map">
-
                 </Tab>
                 <Tab eventKey="reviews" title="Reviews">
 

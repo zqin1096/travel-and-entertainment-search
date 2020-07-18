@@ -1,0 +1,9 @@
+.columnCount {
+    column-count: 4;
+}
+
+@media screen and (max-width: 576px) {
+    .columnCount {
+        column-count: 1;
+    }
+}
