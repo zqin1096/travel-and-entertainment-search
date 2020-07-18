@@ -7,6 +7,7 @@ import Info from './Info';
 import {connect} from 'react-redux';
 import Photos from './Photos';
 import Alert from 'react-bootstrap/Alert';
+import Reviews from './Reviews';
 
 const PlaceDetail = (props) => {
     const [place, setPlace] = useState(null);
@@ -28,6 +29,12 @@ const PlaceDetail = (props) => {
     if (place === null) {
         return null;
     }
+    if (place.reviews && place.reviews.length > 0) {
+        // Add the default_order property to each review (Google Review).
+        for (let i = 0; i < place.reviews.length; i++) {
+            place.reviews[i]['default_order'] = i;
+        }
+    }
     console.log(place);
     return (
         <Container fluid>
@@ -40,7 +47,7 @@ const PlaceDetail = (props) => {
                     {
                         (place.photos && place.photos.length > 0) ?
                             <Photos photos={place.photos}/> :
-                            <Alert variant="warning">
+                            <Alert variant="warning" className="mt-3">
                                 No record.
                             </Alert>
                     }
@@ -48,7 +55,7 @@ const PlaceDetail = (props) => {
                 <Tab eventKey="map" title="Map">
                 </Tab>
                 <Tab eventKey="reviews" title="Reviews">
-
+                    <Reviews googleReviews={place.reviews}/>
                 </Tab>
             </Tabs>
 
