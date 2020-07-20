@@ -8,12 +8,14 @@ import {
 import axios from 'axios';
 import {milesToMeters} from '../utility';
 
+// Set loading to true.
 export const setLoading = () => {
     return {
         type: SET_LOADING
     };
 };
 
+// Clear the form and the results.
 export const clearForm = () => {
     return {
         type: CLEAR_FORM,
@@ -28,12 +30,14 @@ export const changeTab = (tab) => {
     };
 };
 
+// Go to the next page if there is more data.
 export const nextPage = () => {
     return {
         type: NEXT_PAGE
     };
 };
 
+// Store the id of the place in redux.
 export const getPlace = (placeId) => {
     return {
         type: GET_PLACE,
@@ -41,12 +45,14 @@ export const getPlace = (placeId) => {
     };
 };
 
+// Go to the previous page.
 export const prevPage = () => {
     return {
         type: PREV_PAGE
     };
 };
 
+// Get the places based on the form input.
 export const getPlaces = (formData) => {
     return async (dispatch) => {
         try {

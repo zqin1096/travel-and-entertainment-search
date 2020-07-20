@@ -8,9 +8,61 @@ import {connect} from 'react-redux';
 import Photos from './Photos';
 import Alert from 'react-bootstrap/Alert';
 import Reviews from './Reviews';
+import axios from 'axios';
 
 const PlaceDetail = (props) => {
+    // Google place.
     const [place, setPlace] = useState(null);
+    // Yelp Place.
+    const [yelp, setYelp] = useState(null);
+    const getYelp = async () => {
+        if (place === null) {
+            return;
+        }
+        const fields = {};
+        for (let i = 0; i < place.address_components.length; i++) {
+            fields[place.address_components[i].types[0]] = place.address_components[i].short_name
+        }
+        const matchConfig = {
+            params: {
+                name: place.name,
+                address1: `${fields['street_number'] ? fields['street_number'] : ''} ${fields['route'] ? fields['route'] : ''}`,
+                city: fields['locality'],
+                state: fields['administrative_area_level_1'],
+                country: fields['country']
+            }
+        };
+        const match = await axios.get('/api/yelp/match', matchConfig);
+        if (match && match.data.businesses && match.data.businesses.length > 0) {
+            const reviewsConfig = {
+                params: {
+                    id: match.data.businesses[0].id
+                }
+            };
+            const res = await axios.get('/api/yelp/reviews', reviewsConfig);
+            if (res && res.data.reviews) {
+                const reviews = res.data.reviews.map((review, index) => {
+                    return {
+                        author_name: review.user.name,
+                        author_url: review.user.profile_url,
+                        default_order: index,
+                        profile_photo_url: review.user.image_url,
+                        rating: review.rating,
+                        text: review.text,
+                        time: new Date(review.time_created) / 1000
+                    };
+                });
+                setYelp(reviews);
+            } else {
+                setYelp(null);
+            }
+        } else {
+            setYelp(null);
+        }
+    }
+    useEffect(() => {
+        getYelp();
+    }, [place]);
     let service = new google.maps.places.PlacesService(document.createElement('div'));
     useEffect(() => {
         if (props.place.place === null) {
@@ -55,7 +107,7 @@ const PlaceDetail = (props) => {
                 <Tab eventKey="map" title="Map">
                 </Tab>
                 <Tab eventKey="reviews" title="Reviews">
-                    <Reviews googleReviews={place.reviews}/>
+                    <Reviews googleReviews={place.reviews} yelpReviews={yelp}/>
                 </Tab>
             </Tabs>
 

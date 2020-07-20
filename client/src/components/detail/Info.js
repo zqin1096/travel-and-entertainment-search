@@ -8,6 +8,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 const Info = (props) => {
+    // show will be set to true if open hours modal is clicked.
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
