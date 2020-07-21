@@ -7,32 +7,56 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Button from 'react-bootstrap/Button';
 import classes from './Map.module.css';
 import Container from 'react-bootstrap/Container';
+import Pegman from './Pegman.png';
+import MapIcon from './Map.png';
+import Figure from 'react-bootstrap/Figure';
 
 const Map = (props) => {
     const [mode, setMode] = useState('Driving');
-    let map;
-    let marker;
+    const [showStreetView, setStreetView] = useState(false);
+    // Reference to the container that contains the Google Map.
     const mapRef = useRef(null);
+    // Store the Map object in the ref.current.
+    const ref = useRef(null);
+    const coordinate = {
+        lat: props.place.geometry.location.lat(),
+        lng: props.place.geometry.location.lng()
+    };
+    console.log(coordinate);
     const createGoogleMap = () =>
         new google.maps.Map(mapRef.current, {
             zoom: 15,
-            center: {
-                lat: props.place.geometry.location.lat(),
-                lng: props.place.geometry.location.lng(),
-            }
+            center: coordinate,
         });
     const createMarker = () =>
         new google.maps.Marker({
-            position: {
-                lat: props.place.geometry.location.lat(),
-                lng: props.place.geometry.location.lng()
-            },
-            map: map
+            position: coordinate,
+            map: ref.current
         });
+    const panoramaRef = useRef(null);
     useEffect(() => {
-        map = createGoogleMap();
-        marker = createMarker();
-    });
+        console.log('run');
+        ref.current = createGoogleMap();
+        createMarker();
+        panoramaRef.current = ref.current.getStreetView();
+        panoramaRef.current.setPosition(coordinate);
+        panoramaRef.current.setPov(
+            /** @type {google.maps.StreetViewPov} */ ({
+                heading: 265,
+                pitch: 0
+            })
+        );
+    }, [props.place]);
+    const toggleStreetView = () => {
+        const toggle = panoramaRef.current.getVisible();
+        if (toggle === false) {
+            setStreetView(true);
+            panoramaRef.current.setVisible(true);
+        } else {
+            setStreetView(false);
+            panoramaRef.current.setVisible(false);
+        }
+    }
     return (
         <Container fluid style={{padding: 0}}>
             <Form className="mt-3">
@@ -83,6 +107,12 @@ const Map = (props) => {
                     </Form.Group>
                 </Form.Row>
             </Form>
+            <Figure className={classes.pegman} onClick={toggleStreetView}>
+                <Figure.Image
+                    width={36}
+                    height={36}
+                    src={showStreetView ? MapIcon : Pegman} alt="54x54"/>
+            </Figure>
             <Container fluid ref={mapRef}
                        style={{height: '400px'}}/>
         </Container>

@@ -88,7 +88,6 @@ const PlaceDetail = (props) => {
             place.reviews[i]['default_order'] = i;
         }
     }
-    console.log(place);
     return (
         <Container fluid>
             <Tabs defaultActiveKey="info" transition={false}
