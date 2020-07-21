@@ -9,6 +9,7 @@ import Photos from './Photos';
 import Alert from 'react-bootstrap/Alert';
 import Reviews from './Reviews';
 import axios from 'axios';
+import Map from './Map';
 
 const PlaceDetail = (props) => {
     // Google place.
@@ -105,6 +106,7 @@ const PlaceDetail = (props) => {
                     }
                 </Tab>
                 <Tab eventKey="map" title="Map">
+                    <Map place={place}/>
                 </Tab>
                 <Tab eventKey="reviews" title="Reviews">
                     <Reviews googleReviews={place.reviews} yelpReviews={yelp}/>

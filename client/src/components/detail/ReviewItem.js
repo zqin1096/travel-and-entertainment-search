@@ -12,17 +12,25 @@ const ReviewItem = (props) => {
         <Container fluid className="border my-2 pb-3">
             <Row>
                 <Col lg={1} xs={2} className="mt-2">
-                    <img className={classes.roundImg}
-                         style={{
-                             width: '100%',
-                             height: 'auto',
-                             objectFit: 'cover'
-                         }}
-                         src={props.review.profile_photo_url} alt=""/>
+                    <a href={props.review.author_url}
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img className={classes.roundImg}
+                             style={{
+                                 width: '100%',
+                                 height: 'auto',
+                                 objectFit: 'cover'
+                             }}
+                             src={props.review.profile_photo_url} alt=""/>
+                    </a>
                 </Col>
                 <Col lg={11} xs={10} className="mt-2">
                     <Row className="text-info">
-                        <strong>{props.review.author_name}</strong>
+                        <a href={props.review.author_url}
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <strong>{props.review.author_name}</strong>
+                        </a>
                     </Row>
                     <Row className="text-secondary align-items-center">
                         <Rating className="mr-1"
@@ -31,7 +39,7 @@ const ReviewItem = (props) => {
                         {date}
                     </Row>
                     <Row>
-                        <Container className={classes.review}>
+                        <Container fluid className={classes.review}>
                             {props.review.text}
                         </Container>
                     </Row>
