@@ -11,14 +11,22 @@ import Pegman from './Pegman.png';
 import MapIcon from './Map.png';
 import Figure from 'react-bootstrap/Figure';
 import {connect} from 'react-redux';
+import axios from 'axios';
+import Row from 'react-bootstrap/Row';
 
 const Map = (props) => {
     const [mode, setMode] = useState('Driving');
     const [showStreetView, setStreetView] = useState(false);
     const [origin, setOrigin] = useState(props.origin);
+    const [routes, setRoutes] = useState(null);
+    const [active, setActive] = useState(0);
     // Reset the origin.
     useEffect(() => {
+        setMode('Driving');
+        setStreetView(false);
         setOrigin(props.origin);
+        setRoutes(null);
+        setActive(0);
     }, [props.origin]);
 
     // Reference to the container that contains the Google Map.
@@ -40,6 +48,8 @@ const Map = (props) => {
             map: ref.current
         });
     const panoramaRef = useRef(null);
+    let directionsRendererRef = useRef(null);
+    let directionsServiceRef = useRef(null);
     useEffect(() => {
         ref.current = createGoogleMap();
         createMarker();
@@ -51,6 +61,9 @@ const Map = (props) => {
                 pitch: 0
             })
         );
+        directionsRendererRef.current = new google.maps.DirectionsRenderer();
+        directionsServiceRef.current = new google.maps.DirectionsService();
+        directionsRendererRef.current.setMap(ref.current);
     }, [props.place]);
     const toggleStreetView = () => {
         const toggle = panoramaRef.current.getVisible();
@@ -66,8 +79,45 @@ const Map = (props) => {
         setOrigin(event.target.value);
     };
 
-    const onClick = () => {
+    const onClick = async () => {
         console.log(origin, mode);
+        let res;
+        if (origin === 'My location') {
+            res = await axios.get('/api/places/current_location');
+        } else {
+            const locationConfig = {
+                params: {
+                    location: origin
+                }
+            };
+            res = await axios.get('/api/places/geocode', locationConfig);
+        }
+        if (res.data.status) {
+            alert('Invalid address');
+            return;
+        }
+        const {latitude, longitude} = res.data;
+        directionsServiceRef.current.route({
+            origin: {
+                lat: latitude,
+                lng: longitude
+            },
+            destination: {
+                lat: coordinate.lat,
+                lng: coordinate.lng
+            },
+            travelMode: google.maps.TravelMode[`${mode.toUpperCase()}`],
+            provideRouteAlternatives: true
+        }, (response, status) => {
+            if (status === "OK") {
+                setActive(0);
+                setRoutes(response.routes)
+                directionsRendererRef.current.setDirections(response);
+                console.log(response);
+            } else {
+                window.alert("Directions request failed due to " + status);
+            }
+        });
     };
 
     const onPlaceSelected = () => {
@@ -90,6 +140,7 @@ const Map = (props) => {
             onPlaceSelected();
         });
     }, [origin]);
+
     return (
         <Container fluid style={{padding: 0}}>
             <Form className="mt-3">
@@ -152,6 +203,29 @@ const Map = (props) => {
             </Figure>
             <Container fluid ref={mapRef}
                        style={{height: '400px'}}/>
+            {routes !== null &&
+            <Container fluid className="border mt-1">
+                <Row className="px-1">Suggested routes:</Row>
+                {routes.map((route, index) => {
+                    return (
+                        <Row key={index}
+                             className={`px-1 ${classes.line} ${active === index ? classes.selectedRoute : null}`}
+                             onClick={() => {
+                                 setActive(index);
+                                 directionsRendererRef.current.setRouteIndex(index);
+                             }}>
+                            <span className={classes.route}>
+                            {`${route.summary}`}
+                            </span>
+                            <span>&nbsp;</span>
+                            <span className="text-secondary">
+                            {route.legs[0].distance.text}. About {route.legs[0].duration.text}
+                        </span>
+                        </Row>
+                    )
+                })}
+            </Container>
+            }
         </Container>
     )
 };

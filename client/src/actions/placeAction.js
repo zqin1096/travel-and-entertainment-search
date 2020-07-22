@@ -80,6 +80,15 @@ export const getPlaces = (formData) => {
                 };
                 res = await axios.get('/api/places/geocode', locationConfig);
             }
+            // If res.data only contains the latitude and longitude if there
+            // was no error.
+            if (res.data.status) {
+                dispatch({
+                    type: SET_ERROR,
+                    payload: res.data.status
+                });
+                return;
+            }
             const {latitude, longitude} = res.data;
             const radius = formData.distance.replace(/\s/g, '').length ? milesToMeters(Number(formData.distance)) : milesToMeters(10);
             const searchConfig = {
@@ -95,10 +104,6 @@ export const getPlaces = (formData) => {
             const payload = [];
             const status = response.data.status;
             if (status === 'OK') {
-                // dispatch({
-                //     type: GET_PLACES,
-                //     payload: response.data.results
-                // });
                 payload.push(response.data.results);
             } else {
                 dispatch({
