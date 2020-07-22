@@ -10,10 +10,17 @@ import Container from 'react-bootstrap/Container';
 import Pegman from './Pegman.png';
 import MapIcon from './Map.png';
 import Figure from 'react-bootstrap/Figure';
+import {connect} from 'react-redux';
 
 const Map = (props) => {
     const [mode, setMode] = useState('Driving');
     const [showStreetView, setStreetView] = useState(false);
+    const [origin, setOrigin] = useState(props.origin);
+    // Reset the origin.
+    useEffect(() => {
+        setOrigin(props.origin);
+    }, [props.origin]);
+
     // Reference to the container that contains the Google Map.
     const mapRef = useRef(null);
     // Store the Map object in the ref.current.
@@ -22,7 +29,6 @@ const Map = (props) => {
         lat: props.place.geometry.location.lat(),
         lng: props.place.geometry.location.lng()
     };
-    console.log(coordinate);
     const createGoogleMap = () =>
         new google.maps.Map(mapRef.current, {
             zoom: 15,
@@ -35,7 +41,6 @@ const Map = (props) => {
         });
     const panoramaRef = useRef(null);
     useEffect(() => {
-        console.log('run');
         ref.current = createGoogleMap();
         createMarker();
         panoramaRef.current = ref.current.getStreetView();
@@ -57,13 +62,43 @@ const Map = (props) => {
             panoramaRef.current.setVisible(false);
         }
     }
+    const onChange = (event) => {
+        setOrigin(event.target.value);
+    };
+
+    const onClick = () => {
+        console.log(origin, mode);
+    };
+
+    const onPlaceSelected = () => {
+        const place = autocomplete.getPlace();
+        const address = place.formatted_address;
+        setOrigin(address);
+    }
+
+    let autocomplete;
+    let autocompleteRef = useRef(null);
+    // Need to enable Google Maps JavaScript API.
+    useEffect(() => {
+        autocomplete = new google.maps.places.Autocomplete(autocompleteRef.current,
+            {"types": ["geocode"], componentRestrictions: {country: "us"}});
+        autocomplete.addListener("place_changed", () => {
+            // Prevent calling onPlaceSelected() if the user press "enter".
+            if (!autocomplete.getPlace().formatted_address) {
+                return;
+            }
+            onPlaceSelected();
+        });
+    }, [origin]);
     return (
         <Container fluid style={{padding: 0}}>
             <Form className="mt-3">
                 <Form.Row>
                     <Form.Group as={Col} xs={12} md={3} lg={4}>
                         <Form.Label><strong>From</strong></Form.Label>
-                        <Form.Control placeholder="Your location"/>
+                        <Form.Control value={origin}
+                                      ref={autocompleteRef}
+                                      onChange={(event) => onChange(event)}/>
                     </Form.Group>
 
                     <Form.Group as={Col} xs={12} md={3} lg={4}>
@@ -101,7 +136,9 @@ const Map = (props) => {
                     </Form.Group>
                     <Form.Group as={Col} xs={12} md={3} lg={2}
                                 className="d-flex align-items-end">
-                        <Button variant="primary" className={classes.direction}>
+                        <Button variant="primary" className={classes.direction}
+                                disabled={!origin.replace(/\s/g, '').length}
+                                onClick={onClick}>
                             Get directions
                         </Button>
                     </Form.Group>
@@ -119,4 +156,10 @@ const Map = (props) => {
     )
 };
 
-export default Map;
+const mapStateToProps = (state) => {
+    return {
+        origin: state.place.origin
+    };
+};
+
+export default connect(mapStateToProps)(Map);

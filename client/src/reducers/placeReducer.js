@@ -3,7 +3,7 @@ import {
     CLEAR_FORM, GET_PLACE,
     GET_PLACES, NEXT_PAGE, PREV_PAGE,
     SET_ERROR,
-    SET_LOADING
+    SET_LOADING, SET_ORIGIN
 } from '../actions/types';
 
 const initialState = {
@@ -13,7 +13,8 @@ const initialState = {
     error: null,
     activeTab: 'first',
     currentPage: 0,
-    totalPages: 0
+    totalPages: 0,
+    origin: ''
 };
 
 export default (state = initialState, action) => {
@@ -44,7 +45,8 @@ export default (state = initialState, action) => {
                 error: null,
                 activeTab: 'first',
                 currentPage: 0,
-                totalPages: 0
+                totalPages: 0,
+                origin: ''
             };
         case CHANGE_TAB:
             return {
@@ -68,6 +70,11 @@ export default (state = initialState, action) => {
                 error: action.payload,
                 loading: false
             };
+        case SET_ORIGIN:
+            return {
+                ...state,
+                origin: action.payload
+            }
         default:
             return state;
     }

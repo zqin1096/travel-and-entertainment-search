@@ -3,7 +3,11 @@ import {
     SET_ERROR,
     SET_LOADING,
     CLEAR_FORM,
-    CHANGE_TAB, NEXT_PAGE, PREV_PAGE, GET_PLACE
+    CHANGE_TAB,
+    NEXT_PAGE,
+    PREV_PAGE,
+    GET_PLACE,
+    SET_ORIGIN
 } from './types';
 import axios from 'axios';
 import {milesToMeters} from '../utility';
@@ -52,6 +56,13 @@ export const prevPage = () => {
     };
 };
 
+export const setOrigin = (origin) => {
+    return {
+        type: SET_ORIGIN,
+        payload: origin
+    }
+};
+
 // Get the places based on the form input.
 export const getPlaces = (formData) => {
     return async (dispatch) => {
@@ -95,6 +106,7 @@ export const getPlaces = (formData) => {
                     payload: status
                 });
             }
+            dispatch(setOrigin(formData.from === 'current' ? 'My location' : formData.location));
             let token = response.data.next_page_token;
             while (token) {
                 let next_page = await axios.get(`/api/places/additional_results/${token}`);
