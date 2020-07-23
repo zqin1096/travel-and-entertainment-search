@@ -56,7 +56,6 @@ router.get('/geocode', async (req, res) => {
             });
             response.on('end', function () {
                 const json = JSON.parse(body);
-                console.log((json));
                 if (json.status !== 'OK') {
                     return res.send(json);
                 }

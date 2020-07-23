@@ -12,21 +12,16 @@ import MapIcon from './Map.png';
 import Figure from 'react-bootstrap/Figure';
 import {connect} from 'react-redux';
 import axios from 'axios';
-import Row from 'react-bootstrap/Row';
 
 const Map = (props) => {
     const [mode, setMode] = useState('Driving');
     const [showStreetView, setStreetView] = useState(false);
     const [origin, setOrigin] = useState(props.origin);
-    const [routes, setRoutes] = useState(null);
-    const [active, setActive] = useState(0);
     // Reset the origin.
     useEffect(() => {
         setMode('Driving');
         setStreetView(false);
         setOrigin(props.origin);
-        setRoutes(null);
-        setActive(0);
     }, [props.origin]);
 
     // Reference to the container that contains the Google Map.
@@ -61,9 +56,14 @@ const Map = (props) => {
                 pitch: 0
             })
         );
+        // Remove the content from the panel.
+        if (directionsRendererRef.current && directionsRendererRef.current.setPanel) {
+            directionsRendererRef.current.setPanel(null);
+        }
         directionsRendererRef.current = new google.maps.DirectionsRenderer();
         directionsServiceRef.current = new google.maps.DirectionsService();
         directionsRendererRef.current.setMap(ref.current);
+        console.log('run');
     }, [props.place]);
     const toggleStreetView = () => {
         const toggle = panoramaRef.current.getVisible();
@@ -110,10 +110,9 @@ const Map = (props) => {
             provideRouteAlternatives: true
         }, (response, status) => {
             if (status === "OK") {
-                setActive(0);
-                setRoutes(response.routes)
-                directionsRendererRef.current.setDirections(response);
                 console.log(response);
+                directionsRendererRef.current.setDirections(response);
+                directionsRendererRef.current.setPanel(document.getElementById('panel'));
             } else {
                 window.alert("Directions request failed due to " + status);
             }
@@ -203,29 +202,7 @@ const Map = (props) => {
             </Figure>
             <Container fluid ref={mapRef}
                        style={{height: '400px'}}/>
-            {routes !== null &&
-            <Container fluid className="border mt-1">
-                <Row className="px-1">Suggested routes:</Row>
-                {routes.map((route, index) => {
-                    return (
-                        <Row key={index}
-                             className={`px-1 ${classes.line} ${active === index ? classes.selectedRoute : null}`}
-                             onClick={() => {
-                                 setActive(index);
-                                 directionsRendererRef.current.setRouteIndex(index);
-                             }}>
-                            <span className={classes.route}>
-                            {`${route.summary}`}
-                            </span>
-                            <span>&nbsp;</span>
-                            <span className="text-secondary">
-                            {route.legs[0].distance.text}. About {route.legs[0].duration.text}
-                        </span>
-                        </Row>
-                    )
-                })}
-            </Container>
-            }
+            <div id="panel"/>
         </Container>
     )
 };
