@@ -69,6 +69,8 @@ const PlaceDetail = (props) => {
         if (props.place.place === null) {
             return;
         }
+        // Clear the Google place state.
+        setPlace(null);
         service.getDetails({
             placeId: props.place.place
         }, (place, status) => {
@@ -79,7 +81,7 @@ const PlaceDetail = (props) => {
             }
         });
     }, [props.place.place]);
-    if (place === null) {
+    if (props.place.place === null || place === null) {
         return null;
     }
     if (place.reviews && place.reviews.length > 0) {
@@ -90,6 +92,7 @@ const PlaceDetail = (props) => {
     }
     return (
         <Container fluid>
+            <h4 className="text-center">{place.name}</h4>
             <Tabs defaultActiveKey="info" transition={false}
                   className="justify-content-end">
                 <Tab eventKey="info" title="Info">

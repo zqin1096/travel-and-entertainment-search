@@ -35,7 +35,7 @@ const Information = (props) => {
                     <ProgressBar animated now={45}/> :
                     <Tab.Content>
                         <Tab.Pane eventKey="first">
-                            {(!props.place.loading && props.place.places.length > 0) ?
+                            {(props.place.place === null && !props.place.loading && props.place.places.length > 0) ?
                                 <Results
                                     places={props.place.places[props.place.currentPage - 1]}/> : props.place.error === 'ZERO_RESULTS' ?
                                     <Alert variant="warning">
@@ -70,12 +70,12 @@ const Information = (props) => {
                             </div>
                         </Tab.Pane>
                         <Tab.Pane eventKey="second">
-                            {props.favorites.favorites.length > 0 ?
+                            {props.place.place === null && props.favorites.favorites.length > 0 ?
                                 <Favorites
-                                    favorites={props.favorites.favorites}/> :
-                                <Alert variant="warning">
-                                    No record.
-                                </Alert>}
+                                    favorites={props.favorites.favorites}/> : props.place.place === null ?
+                                    <Alert variant="warning">
+                                        No record.
+                                    </Alert> : null}
                         </Tab.Pane>
                     </Tab.Content>
                 }

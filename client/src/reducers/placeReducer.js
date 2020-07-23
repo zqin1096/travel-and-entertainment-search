@@ -42,6 +42,7 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 places: [],
+                place: null,
                 error: null,
                 activeTab: 'first',
                 currentPage: 0,
@@ -51,6 +52,8 @@ export default (state = initialState, action) => {
         case CHANGE_TAB:
             return {
                 ...state,
+                place: null, /* Set the place_id to null to prevent
+                 rendering the details */
                 activeTab: action.payload
             };
         case NEXT_PAGE:
