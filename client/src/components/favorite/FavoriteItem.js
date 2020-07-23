@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {removeFavorite} from '../../actions/favoriteAction';
+import {getPlace} from '../../actions/placeAction';
 import classes from '../result/ResultItem.module.css';
 import Button from 'react-bootstrap/Button';
 import {IoIosArrowForward} from 'react-icons/io';
@@ -28,11 +29,12 @@ const FavoriteItem = (props) => {
             </td>
             <td className="align-middle">
                 <Button variant="light" className="border">
-                    <IoIosArrowForward/>
+                    <IoIosArrowForward
+                        onClick={() => props.getPlace(props.favorite.place_id)}/>
                 </Button>
             </td>
         </tr>
     );
 };
 
-export default connect(null, {removeFavorite})(FavoriteItem);
+export default connect(null, {removeFavorite, getPlace})(FavoriteItem);

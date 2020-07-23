@@ -63,7 +63,6 @@ const Map = (props) => {
         directionsRendererRef.current = new google.maps.DirectionsRenderer();
         directionsServiceRef.current = new google.maps.DirectionsService();
         directionsRendererRef.current.setMap(ref.current);
-        console.log('run');
     }, [props.place]);
     const toggleStreetView = () => {
         const toggle = panoramaRef.current.getVisible();
@@ -80,7 +79,6 @@ const Map = (props) => {
     };
 
     const onClick = async () => {
-        console.log(origin, mode);
         let res;
         if (origin === 'My location') {
             res = await axios.get('/api/places/current_location');
@@ -110,7 +108,6 @@ const Map = (props) => {
             provideRouteAlternatives: true
         }, (response, status) => {
             if (status === "OK") {
-                console.log(response);
                 directionsRendererRef.current.setDirections(response);
                 directionsRendererRef.current.setPanel(document.getElementById('panel'));
             } else {
