@@ -1,6 +1,6 @@
 import {
     CHANGE_TAB,
-    CLEAR_FORM, GET_PLACE,
+    CLEAR_FORM, CLEAR_PLACE, GET_PLACE,
     GET_PLACES, NEXT_PAGE, PREV_PAGE,
     SET_ERROR,
     SET_LOADING, SET_ORIGIN
@@ -77,7 +77,12 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 origin: action.payload
-            }
+            };
+        case CLEAR_PLACE:
+            return {
+                ...state,
+                place: null
+            };
         default:
             return state;
     }

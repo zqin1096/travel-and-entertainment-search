@@ -9,3 +9,4 @@ export const ADD_FAVORITE = 'ADD_FAVORITE';
 export const REMOVE_FAVORITE = 'REMOVE_FAVORITE';
 export const GET_PLACE = 'GET_PLACE';
 export const SET_ORIGIN = 'SET_ORIGIN';
+export const CLEAR_PLACE = 'CLEAR_PLACE';

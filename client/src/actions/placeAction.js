@@ -7,7 +7,8 @@ import {
     NEXT_PAGE,
     PREV_PAGE,
     GET_PLACE,
-    SET_ORIGIN
+    SET_ORIGIN,
+    CLEAR_PLACE
 } from './types';
 import axios from 'axios';
 import {milesToMeters} from '../utility';
@@ -60,6 +61,12 @@ export const setOrigin = (origin) => {
     return {
         type: SET_ORIGIN,
         payload: origin
+    }
+};
+
+export const clearPlace = () => {
+    return {
+        type: CLEAR_PLACE
     }
 };
 

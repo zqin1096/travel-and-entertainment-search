@@ -10,12 +10,17 @@ import Alert from 'react-bootstrap/Alert';
 import Reviews from './Reviews';
 import axios from 'axios';
 import Map from './Map';
+import {IoIosArrowBack} from 'react-icons/io';
+import Button from 'react-bootstrap/Button';
+import {clearPlace} from '../../actions/placeAction';
 
 const PlaceDetail = (props) => {
     // Google place.
     const [place, setPlace] = useState(null);
     // Yelp Place.
     const [yelp, setYelp] = useState(null);
+
+    // Get Yelp reviews.
     const getYelp = async () => {
         if (place === null) {
             return;
@@ -33,6 +38,8 @@ const PlaceDetail = (props) => {
                 country: fields['country']
             }
         };
+        // Use the place information from Google services to find a match at
+        // Yelp.
         const match = await axios.get('/api/yelp/match', matchConfig);
         if (match && match.data.businesses && match.data.businesses.length > 0) {
             const reviewsConfig = {
@@ -62,10 +69,14 @@ const PlaceDetail = (props) => {
         }
     }
     useEffect(() => {
+        // Execute the side effect when the Google place state changes.
         getYelp();
     }, [place]);
+
+    // Get the Google place information.
     let service = new google.maps.places.PlacesService(document.createElement('div'));
     useEffect(() => {
+        // Check if the place ID exists.
         if (props.place.place === null) {
             return;
         }
@@ -93,6 +104,13 @@ const PlaceDetail = (props) => {
     return (
         <Container fluid>
             <h4 className="text-center">{place.name}</h4>
+            <Container fluid style={{padding: 0}}>
+                <Button variant="light" className="border">
+                    <IoIosArrowBack onClick={() => {
+                        props.clearPlace();
+                    }}/>List
+                </Button>
+            </Container>
             <Tabs defaultActiveKey="info" transition={false}
                   className="justify-content-end">
                 <Tab eventKey="info" title="Info">
@@ -125,4 +143,4 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps)(PlaceDetail);
+export default connect(mapStateToProps, {clearPlace})(PlaceDetail);
