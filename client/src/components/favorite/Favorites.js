@@ -36,7 +36,7 @@ const Favorites = (props) => {
                 <tbody>
                 {props.favorites.slice((page - 1) * 20, Math.min((props.favorites.length, (page - 1) * 20 + 20))).map((favorite, index) => {
                     return <FavoriteItem favorite={favorite} index={index}
-                                         key={favorite.id}/>
+                                         key={favorite.place_id}/>
                 })}
                 </tbody>
             </Table>

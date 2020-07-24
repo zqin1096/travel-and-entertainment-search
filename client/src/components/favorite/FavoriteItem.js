@@ -9,19 +9,19 @@ import {FaTrashAlt} from 'react-icons/fa';
 
 const FavoriteItem = (props) => {
     const removeFavorite = () => {
-        props.removeFavorite(props.favorite);
+        props.removeFavorite(props.favorite.place_id);
     };
     return (
         <tr>
             <td className="align-middle"><strong>{props.index + 1}</strong></td>
             <td className="align-middle">
-                <img src={props.favorite.icon} className={classes.resize}
+                <img src={props.favorite.category} className={classes.resize}
                      alt="category"/>
             </td>
             <td className="align-middle"
                 nowrap="nowrap">{props.favorite.name}</td>
             <td className="align-middle"
-                nowrap="nowrap">{props.favorite.vicinity}</td>
+                nowrap="nowrap">{props.favorite.address}</td>
             <td className="align-middle">
                 <Button variant="light" className="border">
                     <FaTrashAlt onClick={removeFavorite}/>

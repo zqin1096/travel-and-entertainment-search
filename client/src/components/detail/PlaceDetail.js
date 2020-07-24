@@ -13,6 +13,10 @@ import Map from './Map';
 import {IoIosArrowBack} from 'react-icons/io';
 import Button from 'react-bootstrap/Button';
 import {clearPlace} from '../../actions/placeAction';
+import {IconContext} from 'react-icons';
+import {AiFillStar, AiOutlineStar} from 'react-icons/ai';
+import {addFavorite, removeFavorite} from '../../actions/favoriteAction';
+import Twitter from './Twitter.png';
 
 const PlaceDetail = (props) => {
     // Google place.
@@ -92,6 +96,18 @@ const PlaceDetail = (props) => {
             }
         });
     }, [props.place.place]);
+    const addFavorite = (place) => {
+        props.addFavorite({
+            category: place.icon,
+            name: place.name,
+            address: place.vicinity,
+            place_id: place.place_id
+        });
+    };
+
+    const removeFavorite = (place) => {
+        props.removeFavorite(place.place_id);
+    }
     if (props.place.place === null || place === null) {
         return null;
     }
@@ -101,6 +117,9 @@ const PlaceDetail = (props) => {
             place.reviews[i]['default_order'] = i;
         }
     }
+    const isFavorite = props.favorites.favorites.find((favorite) => {
+        return favorite.place_id === place.place_id;
+    });
     return (
         <Container fluid>
             <h4 className="text-center">{place.name}</h4>
@@ -109,6 +128,33 @@ const PlaceDetail = (props) => {
                     <IoIosArrowBack onClick={() => {
                         props.clearPlace();
                     }}/>List
+                </Button>
+                <Button className="border float-right mx-1"
+                        style={{padding: 0}}>
+                    <a className="twitter-share-button"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       href={`https://twitter.com/intent/tweet?text=${`Check out ${place.name} located at ${place.vicinity}. Website: ${place.website}`}&hashtags=${['TravelAndEntertainmentSearch']}`}>
+                        <img src={Twitter} alt="tweet" style={{
+                            width: '42px',
+                            height: '38px',
+                            borderRadius: '2px'
+                        }}/>
+                    </a>
+                </Button>
+                <Button variant="light" className="border float-right">
+                    {isFavorite ?
+                        <IconContext.Provider
+                            value={{
+                                color: '#FED62F'
+                            }}>
+                            <AiFillStar onClick={() => {
+                                removeFavorite(place)
+                            }}/>
+                        </IconContext.Provider> :
+                        <AiOutlineStar onClick={() => {
+                            addFavorite(place);
+                        }}/>}
                 </Button>
             </Container>
             <Tabs defaultActiveKey="info" transition={false}
@@ -139,8 +185,13 @@ const PlaceDetail = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        place: state.place
+        place: state.place,
+        favorites: state.favorites
     }
 };
 
-export default connect(mapStateToProps, {clearPlace})(PlaceDetail);
+export default connect(mapStateToProps, {
+    clearPlace,
+    addFavorite,
+    removeFavorite
+})(PlaceDetail);

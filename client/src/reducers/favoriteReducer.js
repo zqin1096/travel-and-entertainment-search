@@ -15,7 +15,7 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 favorites: state.favorites.filter((favorite) => {
-                    return favorite.id !== action.payload.id;
+                    return favorite.place_id !== action.payload;
                 })
             };
         default:

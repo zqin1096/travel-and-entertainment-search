@@ -12,9 +12,9 @@ export const addFavorite = (place) => {
 };
 
 // Remove a favorite place.
-export const removeFavorite = (place) => {
+export const removeFavorite = (placeId) => {
     return {
         type: REMOVE_FAVORITE,
-        payload: place
+        payload: placeId
     };
 };

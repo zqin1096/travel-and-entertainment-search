@@ -10,15 +10,20 @@ import {getPlace} from '../../actions/placeAction';
 
 const ResultItem = (props) => {
     const isFavorite = props.favorites.favorites.find((favorite) => {
-        return favorite.id === props.place.id;
+        return favorite.place_id === props.place.place_id;
     });
 
     const addFavorite = () => {
-        props.addFavorite(props.place);
+        props.addFavorite({
+            category: props.place.icon,
+            name: props.place.name,
+            address: props.place.vicinity,
+            place_id: props.place.place_id
+        });
     };
 
     const removeFavorite = () => {
-        props.removeFavorite(props.place);
+        props.removeFavorite(props.place.place_id);
     }
     return (
         <tr>
