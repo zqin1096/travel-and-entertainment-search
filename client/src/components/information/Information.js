@@ -49,6 +49,7 @@ const Information = (props) => {
                             <div className="text-center pb-5">
                                 <div>
                                     {
+                                        props.place.place === null &&
                                         props.place.currentPage > 1 &&
                                         <Button
                                             variant="light"
@@ -58,6 +59,7 @@ const Information = (props) => {
                                         </Button>
                                     }
                                     {
+                                        props.place.place === null &&
                                         props.place.currentPage < props.place.totalPages &&
                                         <Button
                                             variant="light"
